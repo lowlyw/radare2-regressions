@@ -45,11 +45,26 @@ bool test_r_stack_grow(void) {
 	mu_end;
 }
 
+bool test_r_stack_peek(void) {
+	RStack *stack = r_stack_new (5);
+	mu_assert_eq (r_stack_size (stack), 0, "normal stack size");
+	mu_assert_eq ((int)(intptr_t)r_stack_peek (stack), (int)(intptr_t)NULL, "peek with nothing returns NULL");
+	r_stack_push (stack, (void*)(intptr_t)0x1337);
+	r_stack_push (stack, (void*)(intptr_t)0x8888);
+	r_stack_push (stack, (void*)(intptr_t)0xB00B5);
+	mu_assert_eq (r_stack_size (stack), 3, "stack pushed three times");
+	mu_assert_eq ((int)(intptr_t)r_stack_peek (stack), 0xB00B5, "peek with nothing returns NULL");
+	mu_assert_eq (r_stack_size (stack), 3, "peeking doesn't change the size");
+	r_stack_free (stack);
+	mu_end;
+}
+
 int all_tests() {
 	mu_run_test(test_r_stack_pop_empty);
 	mu_run_test(test_r_stack_push_pop);
 	mu_run_test(test_r_stack_push_pop_multi);
 	mu_run_test(test_r_stack_grow);
+	mu_run_test(test_r_stack_peek);
 	return tests_passed != tests_run;
 }
 
